@@ -57,3 +57,10 @@ Os detalhes completos estão em [`docs/resumos-por-servico/well-architected.md`]
 * IAM = controle de identidade e acesso (usuários, grupos, políticas, MFA).
 * STS = credenciais temporárias (crachá de visitante).
 * Well-Architected = guia de boas práticas para criar sistemas robustos.
+
+### 🧪 Labs
+- [Lab 1: Criando um Usuário IAM com MFA e Acesso via AWS CLI com STS](labs/lab_1_usuario_iam_mfa_cli_sts.md)  
+
+
+### ❓ Questões
+- [Perguntas e Respostas](questions/README.md)

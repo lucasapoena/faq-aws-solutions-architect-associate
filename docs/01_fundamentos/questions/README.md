@@ -2,7 +2,7 @@
 
 1. Um usuário IAM chamado `usuario-terminal` foi criado com acesso programático. Ele tem permissão apenas de leitura (ReadOnlyAccess) e nenhuma permissão para console. Qual comportamento abaixo está correto quando esse usuário tenta fazer login no Console da AWS?
 
-    -[] A) Ele pode fazer login normalmente, mas verá apenas opções de leitura.
+    -[] Ele pode fazer login normalmente, mas verá apenas opções de leitura.
 - [] B) Ele não pode fazer login no Console AWS, pois não foi criada senha de Console.
 - [] C) Ele pode fazer login no Console se usar a mesma Access Key + Secret.
 - [] D) Ele pode fazer login apenas se ativar MFA primeiro.

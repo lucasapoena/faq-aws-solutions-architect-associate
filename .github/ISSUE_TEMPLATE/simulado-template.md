@@ -1,5 +1,5 @@
 ---
-name: Custom issue template
+name: simulado-template
 about: Criar issue para acompanhamento de simulado ou revisão geral
 title: 'Simulado: [NOME DO SIMULADO OU “Revisão Geral SAA-C03”]'
 labels: revisão, simulado

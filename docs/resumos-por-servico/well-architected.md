@@ -49,8 +49,16 @@ Ele ajuda arquitetos e equipes a criarem soluções que sejam **seguras, resilie
 - Ex.: workloads mais eficientes, menos desperdício de energia.  
 - **Analogia:** Trocar lâmpadas por LEDs de baixo consumo.
 
+## 🛠️ Well-Architected Tool
+A AWS disponibiliza no console a **Well-Architected Tool**, que permite avaliar suas workloads de acordo com os 6 pilares.  
+Você responde a um questionário guiado e recebe recomendações práticas para melhorar segurança, confiabilidade e custos.  
+Essa ferramenta é usada inclusive por arquitetos da AWS em revisões com clientes.
+
 ## 🔑 Conclusão
 - O Well-Architected Framework é uma **bússola** para criar sistemas bem projetados.  
 - Seguir os 6 pilares garante soluções mais seguras, confiáveis, econômicas e sustentáveis.  
 
 📌 Na certificação SAA-C03, frequentemente aparecem **questões de cenário** que exigem aplicar esses pilares para escolher a melhor arquitetura.
+
+📌 Na prova, muitas questões apresentam **trade-offs entre os pilares**.  
+É importante identificar **qual pilar está sendo priorizado no cenário** para escolher a resposta correta.

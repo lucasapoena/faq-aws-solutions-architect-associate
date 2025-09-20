@@ -92,7 +92,8 @@ Este repositório documenta meu estudo para a certificação **AWS Certified Sol
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
 - Documentação oficial AWS (IAM, VPC, S3, EC2, etc.)
 - Cursos:
-  - [Certificação AWS Solutions Architect Associate SAA-C03 PT-BR](https://www.udemy.com/course/certificacao-aws-solutions-architect-associate-saa-c03-curso) 
+  - [Certificação AWS Solutions Architect Associate SAA-C03 PT-BR](https://www.udemy.com/course/certificacao-aws-solutions-architect-associate-saa-c03-curso)
+    - [Material de Apoio](https://github.com/marlonanesi/curso-aws-solutions-architect-associate) 
 
 ---
 

@@ -36,3 +36,36 @@ Ele permite criar uma rede **isolada e personalizada** dentro da AWS, onde você
 | **Network ACLs (NACLs)** | Firewall em nível de subnet. Regras **stateless** (precisa permitir entrada e saída). | Questões de prova com foco em bloquear tráfego em subnets inteiras. |
 | **VPC Peering** | Conecta duas VPCs para comunicação interna. | Atenção: não suporta CIDR sobreposto; precisa configurar rotas. |
 | **VPC Endpoints** | Permite acessar serviços AWS (S3, DynamoDB etc.) sem passar pela internet. | Saber diferenciar **Gateway Endpoint (S3, DynamoDB)** e **Interface Endpoint (outros via PrivateLink)**. |
+
+
+# 📊 Endereços IP reservados em subnets AWS
+
+Quando criamos uma subnet em uma **VPC da AWS**, **5 endereços IP são sempre reservados** e não podem ser atribuídos a instâncias:
+
+- 1️⃣ **Primeiro endereço** → identificador da rede (ex.: `10.0.0.0`)  
+- 2️⃣ **Segundo endereço** → roteador da VPC (gateway padrão da subnet, ex.: `10.0.0.1`)  
+- 3️⃣ **Terceiro endereço** → DNS interno da AWS (ex.: `10.0.0.2`)  
+- 4️⃣ **Quarto endereço** → reservado para uso futuro da AWS (ex.: `10.0.0.3`)  
+- 5️⃣ **Último endereço** → broadcast (ex.: `10.0.0.255`)  
+
+---
+
+## 📌 Exemplos práticos
+
+| Subnet CIDR | Total de IPs | IPs Reservados | IPs Utilizáveis | Observações |
+|-------------|--------------|----------------|-----------------|-------------|
+| `/24` (ex.: 10.0.0.0/24) | 256 | 5 | **251** | Mais comum em labs; útil para até ~250 instâncias |
+| `/28` (ex.: 10.0.0.0/28) | 16 | 5 | **11** | Útil em subnets pequenas; limite reduzido pode atrapalhar escalabilidade |
+| `/16` (ex.: 10.0.0.0/16) | 65.536 | 5 | **65.531** | Usado em ambientes grandes, mas ainda perde 5 IPs fixos |
+
+---
+
+## 🧠 Dica de prova
+- Sempre **subtraia 5 do total de IPs** calculados pela máscara da subnet.  
+- Fórmula: `2^(32 - máscara) – 5 = IPs utilizáveis`  
+
+Exemplo rápido:  
+- `/24` → `2^(32-24) = 256 – 5 = 251`  
+- `/28` → `2^(32-28) = 16 – 5 = 11`  
+
+📌 **Regra fixa:** não importa o tamanho da subnet, a AWS sempre reserva 5 endereços.

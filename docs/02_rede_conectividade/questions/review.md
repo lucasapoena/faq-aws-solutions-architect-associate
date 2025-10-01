@@ -117,7 +117,7 @@
 - [ ] D) A subnet precisa estar em múltiplas AZs.
   ❌ *Errado*
 
-### 🔍 Mais Detalhes 
+### 🔍 Saiba mais...
 
 #### 📌 Situação
 
@@ -242,9 +242,9 @@ Mesmo com IGW e rotas corretas, a internet não sabe como devolver o tráfego, p
 - [ ] D) Nenhum, todos podem ser usados.
   ❌ *Errado*
 
-### 🔍 Mais Detalhes 
+### 🔍 Saiba mais...
 
-#### 🔎 Por que são 5 IPs reservados?
+#### 📌 Por que são 5 IPs reservados?
 
 Quando você cria uma subnet dentro de uma VPC, a AWS automaticamente reserva **5 endereços IP por subnet**. Isso acontece porque a AWS precisa de alguns desses IPs para gerenciamento interno de rede.
 
@@ -305,6 +305,43 @@ Esses 5 IPs têm funções específicas:
 - [ ] D) O tráfego é redirecionado para NAT Gateway.
   ❌ *Errado*
 
+### 🔍 Saiba mais...
+
+#### 📌 Por que isso acontece?
+
+* O **VPC Peering** é basicamente um "link privado" entre duas VPCs.
+* Quando você cria esse link, a AWS **verifica os blocos CIDR de cada VPC**.
+* Se eles **se sobrepõem (mesmo parcialmente)**, o **peering não é criado**.
+
+👉 Isso acontece porque:
+
+* As rotas da tabela de rotas não teriam como distinguir o destino correto.
+* Exemplo:
+
+  * VPC A → `10.0.0.0/16`
+  * VPC B → `10.0.0.0/16` (ou mesmo `10.0.1.0/24`)
+  * Se o tráfego for para `10.0.1.10`, qual destino a rota deveria usar? Não há forma de resolver conflito.
+
+Por isso, a AWS já **rejeita na criação do peering**.
+
+#### ❌ Por que as outras estão erradas?
+
+* **A) Peering é criado, mas tráfego é bloqueado**
+  *Errado.* Ele nem chega a ser criado.
+* **C) Peering funciona apenas em subnets públicas**
+  *Errado.* Peering funciona em qualquer subnet (privada ou pública), desde que o CIDR não se sobreponha.
+* **D) O tráfego é redirecionado para NAT Gateway**
+  *Errado.* NAT não tem nada a ver com peering; é usado só para saída de subnets privadas para internet.
+
+#### 🧠 Como lembrar para a prova
+
+* **Regra fixa de peering:** *"CIDRs não podem se sobrepor."*
+* AWS **valida isso no momento da criação**.
+* Se tiver overlap → **“request failed”** e você nem chega a configurar rotas.
+
+👉 Dica prática:
+Se você precisa interligar VPCs com CIDRs sobrepostos, o caminho é **VPC Transit Gateway + NAT/Translation** (usando NAT Gateway ou PrivateLink para mapear endereços).
+
 ---
 
 ## 17. Qual vantagem principal de uma Custom VPC sobre a Default VPC?
@@ -330,6 +367,71 @@ Esses 5 IPs têm funções específicas:
   ❌ *Errado*
 - [ ] D) Rotas locais precisam ser configuradas manualmente.
   ❌ *Errado* São automáticas.
+
+### 🔍 Saiba mais...
+
+#### 📌 O que é uma **rota local**?
+
+* Sempre que você cria uma **VPC**, a AWS **gera automaticamente** uma rota especial chamada **local**.
+* Essa rota aparece na tabela de rotas da subnet como:
+
+```
+10.0.0.0/16 → local
+```
+
+* **Função:** garantir que **todas as subnets da mesma VPC** possam se comunicar entre si **sem configuração adicional**.
+
+👉 Ou seja: não importa se a subnet é pública ou privada, **o tráfego interno entre IPs da VPC é permitido por padrão** (a não ser que NACLs/SGs bloqueiem).
+
+#### 🚧 Mas atenção: roteamento ≠ permissão de tráfego
+O fato de existir a rota local **não significa que a comunicação está liberada automaticamente entre instâncias**.  
+
+- **Security Groups (SGs):**  
+  - São stateful e controlam portas e protocolos em nível de instância.  
+  - Se o SG da instância não permitir tráfego de outra instância, a comunicação é negada.  
+  - Exemplo: EC2 em Subnet A só aceita SSH se o SG permitir `porta 22` do CIDR da VPC.
+
+- **NACLs (Network ACLs):**  
+  - São stateless e atuam em nível de subnet.  
+  - O NACL default permite tudo, então geralmente não bloqueia nada.  
+  - Se você criar um NACL restritivo, pode bloquear esse tráfego interno.
+
+👉 **Resumo prático:**  
+- A **rota local garante o caminho**,  
+- Mas **quem decide se passa ou não** são **SGs e NACLs**.
+
+#### ❌ Por que as outras opções estão erradas?
+- **A) Rotas locais só existem em subnets públicas.**  
+  *Errado.* Existem em todas as subnets, públicas e privadas.  
+
+- **C) Rotas locais são removidas se a subnet for privada.**  
+  *Errado.* Sempre permanecem. Para bloquear tráfego, use NACLs/SGs.  
+
+- **D) Rotas locais precisam ser configuradas manualmente.**  
+  *Errado.* São criadas automaticamente pela AWS e não podem ser deletadas ou editadas.  
+
+#### 🧠 Como lembrar para a prova
+- **Frase mágica:** *"Local route = comunicação interna garantida (desde que SG/NACL permitam)."*  
+- Sempre aparece como **`local`** na route table.  
+- Existe em **todas as subnets**, não importa se públicas ou privadas.  
+- É **imutável**: não pode ser apagada ou editada.
+
+#### 💡 Dica visual (exemplo)
+
+- VPC: `10.0.0.0/16`  
+- Subnet A: `10.0.1.0/24`  
+- Subnet B: `10.0.2.0/24`  
+
+Na route table de cada subnet vai ter:
+
+```
+10.0.0.0/16 → local
+```
+
+
+🔗 Isso permite que instâncias da Subnet A conversem com as da Subnet B **sem NAT, IGW ou VPN**.  
+🚦 Mas se o **Security Group** da instância não liberar a porta, o tráfego é bloqueado mesmo assim.
+
 
 ---
 
